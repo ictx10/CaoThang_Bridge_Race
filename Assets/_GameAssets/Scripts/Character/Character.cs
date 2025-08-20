@@ -12,22 +12,19 @@ public class Character : ObjectColor
     [SerializeField] protected Transform skin;
     [SerializeField] private PlayerBrick playerBrickPrefabs;
     [SerializeField] private Transform brickHolder;
-    
+
+    public Animator anim;
+    private string currentAnim;
+
+
     [HideInInspector] public Stage stage;
 
     public int BrickCount => playerBricks.Count;
 
-    // Start is called before the first frame update
-    //TODO: Test
-    protected virtual void Start()
+    public virtual void OnInit()
     {
-        ChangeColor(colorType);
-    }
-
-    // Update is called once per frame
-    void Update()
-    {
-        
+        ClearBrick();
+        skin.transform.rotation = Quaternion.identity; 
     }
     //Check next place is Ground or not
     //if the next place is Ground:
@@ -118,6 +115,17 @@ public class Character : ObjectColor
                 AddBrick();
                 Destroy(brick.gameObject);
             }
+        }
+    }
+
+
+    public void ChangeAnim(string animName)
+    {
+        if (currentAnim != animName)
+        {
+            anim.ResetTrigger(currentAnim);
+            currentAnim = animName;
+            anim.SetTrigger(currentAnim);
         }
     }
 }

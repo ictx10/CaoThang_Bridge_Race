@@ -67,9 +67,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e6c0628e3c5359244924c4e5b49ac994, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  poolType: 1
   colorType: 0
   renderer: {fileID: 2987040389593567482}
   colorData: {fileID: 11400000, guid: ce6df8399a970b5498602604d7f88cae, type: 2}
+  stage: {fileID: 0}
 --- !u!1 &3589041938737676580
 GameObject:
   m_ObjectHideFlags: 0

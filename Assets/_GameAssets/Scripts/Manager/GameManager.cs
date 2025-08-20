@@ -3,9 +3,14 @@ using System.Collections.Generic;
 using UnityEngine;
 
 public enum GameState { MainMenu, Gameplay, Pause }
-public class GameManager : MonoBehaviour
+public class GameManager : Singleton<GameManager>
 {
     private GameState _gameState;
+
+    private void Start()
+    {
+        ChangeState(GameState.MainMenu);
+    }
     public void ChangeState(GameState state)
     {
         this._gameState = state;

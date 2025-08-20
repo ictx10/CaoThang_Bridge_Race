@@ -10,7 +10,7 @@ public class Player : Character
     // Update is called once per frame
     void Update()
     {
-        if (Input.GetMouseButton(0))
+        if (GameManager.Instance.IsState(GameState.Gameplay) && Input.GetMouseButton(0))
         {
             Vector3 nextPoint = JoystickController.direct * speed * Time.deltaTime + transform.position;
             if (CanMove(nextPoint))
@@ -21,6 +21,12 @@ public class Player : Character
             {
                 skin.forward = JoystickController.direct;
             }
+
+            ChangeAnim("run");
+        }
+        if (Input.GetMouseButtonUp(0)) 
+        { 
+            ChangeAnim("idle");
         }
     }
 

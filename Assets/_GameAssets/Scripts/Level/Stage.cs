@@ -20,8 +20,9 @@ public class Stage : MonoBehaviour
             emptyPoint.Add(brickPoint[i].position);
         }
     }
-    public void InitColor(ColorType color, int amount)
+    public void InitColor(ColorType color)
     {
+        int amount = brickPoint.Length / LevelManager.Instance.CharacterAmount;
         for(int i = 0;i < amount; i++)
         {
             NewBrick(color);
@@ -32,7 +33,8 @@ public class Stage : MonoBehaviour
         int rand = Random.Range(0, emptyPoint.Count);
         if (emptyPoint.Count > 0)
         {
-            Brick brick = Instantiate(brickPrefabs, emptyPoint[rand], Quaternion.identity);
+            //Brick brick = Instantiate(brickPrefabs, emptyPoint[rand], Quaternion.identity);
+            Brick brick = SimplePool.Spawn<Brick>(brickPrefabs, emptyPoint[rand], Quaternion.identity);
             brick.stage = this;
             brick.ChangeColor(colorType);
             emptyPoint.RemoveAt(rand);

@@ -21,6 +21,11 @@ public class Bot : Character
         destination.y = 0;
         agent.SetDestination(pos);
     }
+    public override void OnInit()
+    {
+        base.OnInit();
+        ChangeAnim("idle");
+    }
 
 
 
@@ -34,7 +39,7 @@ public class Bot : Character
     }*/
     private void Update()
     {
-        if (currentState != null)
+        if (GameManager.Instance.IsState(GameState.Gameplay) && currentState != null)
         {
             currentState.OnExecute(this);
             //TODO: Check stair

@@ -2,6 +2,13 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
+//TODO: Chua reset brick on stage,
+//playerprebs chua clear gach co san
+//=> 
+// trong mainmenu set lai disable joystick
+
+//NewStageBox cham vao` ra tu dong spawn them gach
+
 public class LevelManager : Singleton<LevelManager>
 {
     readonly List<ColorType> colorTypes = new List<ColorType>() 
@@ -22,13 +29,21 @@ public class LevelManager : Singleton<LevelManager>
 
     private Level currentLevel;
 
+    private int levelIndex;
+
+    private void Awake()
+    {
+        levelIndex = PlayerPrefs.GetInt("Level", 0);
+    }
+
     public Vector3 FinishPoint => currentLevel.finishPoint.position;
     public int CharacterAmount => currentLevel.botAmount + 1;
 
     private void Start()
     {
-        LoadLevel(0);
+        LoadLevel(levelIndex);
         OnInit();
+        UIManager.Instance.OpenUI<MainMenu>();
     }
 
     public void OnInit()
@@ -47,20 +62,25 @@ public class LevelManager : Singleton<LevelManager>
         }
 
         //Init random color
-        List<ColorType> colorDatas = Ultilities.SortOrder(colorTypes, CharacterAmount);
+        List<ColorType> colorDatas = Utilities.SortOrder(colorTypes, CharacterAmount);
         
         //Set position for player
         int rand = Random.Range(0, CharacterAmount);
-        player.transform.position = startPoints[0];
+        player.transform.position = startPoints[rand];
+        player.transform.rotation = Quaternion.identity;
+        startPoints.RemoveAt(rand);
         //Set color for player
         player.ChangeColor(colorDatas[rand]);
-        startPoints.RemoveAt(rand);
+        colorDatas.RemoveAt(rand);
 
-
+        player.OnInit();
         for (int i = 0; i < CharacterAmount - 1; i++)
         {
-            Bot bot = Instantiate(botPrefabs, startPoints[i], Quaternion.identity);
+            //Bot bot = Instantiate(botPrefabs, startPoints[i], Quaternion.identity);   //Using Instanciate to spawn bot 
+            //Bot bot = SimplePool.Spawn<Bot>(botPrefabs, startPoints[i], Quaternion.identity);   //Using SimplePool.Spawn to spawn bot from prefabs
+            Bot bot = SimplePool.Spawn<Bot>(PoolType.Bot, startPoints[i], Quaternion.identity);   //Using SimplePool.Spawn to spawn bot by PoolType
             bot.ChangeColor(colorDatas[i]);
+            bot.OnInit();
             bots.Add(bot);  
         }
     }
@@ -88,6 +108,7 @@ public class LevelManager : Singleton<LevelManager>
 
     public void OnStartGame()
     {
+        GameManager.Instance.ChangeState(GameState.Gameplay);
         for (int i = 0; i < bots.Count; i++) {
             bots[i].ChangeState(new PatrolState());
         }
@@ -102,10 +123,31 @@ public class LevelManager : Singleton<LevelManager>
     }
     public void OnReset()
     {
-        for (int i = 0; i < bots.Count; i++)
-        {
-            Destroy(bots[i]);
-        }
+        //for (int i = 0; i < bots.Count; i++)
+        //{
+        //    Destroy(bots[i].gameObject);
+        //}
+
+        SimplePool.CollectAll();
         bots.Clear();
+    }
+
+    internal void OnNextLevel()
+    {
+        levelIndex++;
+        PlayerPrefs.SetInt("Level", levelIndex);
+        OnReset();
+        LoadLevel(levelIndex);
+        OnInit();
+        UIManager.Instance.OpenUI<MainMenu>();
+    }
+
+    internal void OnRetry()
+    {
+        OnReset();
+        LoadLevel(levelIndex);
+        OnInit();
+        UIManager.Instance.OpenUI<MainMenu>();
+        UIManager.Instance.CloseUI<Gameplay>();
     }
 }

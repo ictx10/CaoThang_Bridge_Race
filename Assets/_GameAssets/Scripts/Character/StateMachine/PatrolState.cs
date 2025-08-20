@@ -11,6 +11,7 @@ public class PatrolState : IState<Bot>
     int targetBrick;
     public void OnEnter(Bot t)
     {
+        t.ChangeAnim("run");
         targetBrick = Random.Range(2, 7); //set random 2->6 brick as target
         SeekTarget(t);
     }
