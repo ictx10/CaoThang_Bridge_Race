@@ -29,7 +29,7 @@ public class Bot : Character
 
 
 
-    //Controlling Bot's stage
+    //Controlling Bot's state
     IState<Bot> currentState;
 
     /*protected override void Start()
